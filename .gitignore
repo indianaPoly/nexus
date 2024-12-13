@@ -1,0 +1,12 @@
+.env
+node_modules
+yarn.lock
+
+/packages/frontend/node_modules
+/packages/frontend/.env
+
+/packages/backend/node_modules
+/packages/backend/dist
+/packages/backend/.env
+
+.DS_Store

@@ -1,0 +1,13 @@
+{
+  "name": "nexus",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "yarn workspaces run dev",
+    "build": "yarn workspaces run build",
+    "frontend": "yarn workspace @nexus/frontend dev",
+    "backend": "yarn workspace @nexus/backend dev"
+  }
+}
