@@ -9,4 +9,19 @@ yarn.lock
 /packages/backend/dist
 /packages/backend/.env
 
+/packages/contract/node_modules
+/packages/contract/cache
+/packages/contract/artifacts
+
+# TypeChain files
+/packages/contract/typechain
+/packages/contract/typechain-types
+
+# solidity-coverage files
+/packages/contract/coverage
+/packages/contract/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+/packages/contractignition/deployments/chain-31337
+
 .DS_Store

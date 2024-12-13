@@ -1,0 +1,11 @@
+{
+  "name": "contract",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "george",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.17"
+  }
+}
