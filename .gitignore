@@ -4,10 +4,12 @@ yarn.lock
 
 /packages/frontend/node_modules
 /packages/frontend/.env
+/packages/frontend/yarn-error.log
 
 /packages/backend/node_modules
 /packages/backend/dist
 /packages/backend/.env
+/packages/frontend/yarn-error.log
 
 /packages/contract/node_modules
 /packages/contract/cache
