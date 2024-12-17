@@ -8,7 +8,7 @@ import { useMode } from "@/providers/ModeProvider";
 
 const Header = () => {
   const { mode, toggleMode } = useMode();
-  const { isConnecting, isDisconnected } = useAccount();
+  const { address, isConnecting, isDisconnected } = useAccount();
 
   return (
     <header className="flex justify-between items-center p-6 bg-gray-900 text-white shadow-md w-full">
@@ -24,32 +24,34 @@ const Header = () => {
       </div>
 
       <div className="flex items-center space-x-6">
-        <button
-          className={`flex items-center rounded-full px-1 py-0.5 relative cursor-pointer w-24 h-8 transition-colors duration-300 ${
-            mode === "sell" ? "bg-pink-500" : "bg-blue-500"
-          }`}
-          onClick={toggleMode}
-        >
-          <div
-            className={`absolute left-0 w-1/2 opacity-15 h-full bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out ${
-              mode === "sell" ? "translate-x-full" : "translate-x-0"
+        {address && (
+          <button
+            className={`flex items-center rounded-full px-1 py-0.5 relative cursor-pointer w-24 h-8 transition-colors duration-300 ${
+              mode === "sell" ? "bg-pink-500" : "bg-blue-500"
             }`}
-          />
-          <span
-            className={`z-10 w-1/2 text-center text-sm font-semibold transition-colors duration-300 ${
-              mode === "buy" ? "text-white" : "text-gray-100"
-            }`}
+            onClick={toggleMode}
           >
-            Buy
-          </span>
-          <span
-            className={`z-10 w-1/2 text-center text-sm font-semibold transition-colors duration-300 ${
-              mode === "sell" ? "text-white" : "text-gray-100"
-            }`}
-          >
-            Sell
-          </span>
-        </button>
+            <div
+              className={`absolute left-0 w-1/2 opacity-15 h-full bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out ${
+                mode === "sell" ? "translate-x-full" : "translate-x-0"
+              }`}
+            />
+            <span
+              className={`z-10 w-1/2 text-center text-sm font-semibold transition-colors duration-300 ${
+                mode === "buy" ? "text-white" : "text-gray-100"
+              }`}
+            >
+              Buy
+            </span>
+            <span
+              className={`z-10 w-1/2 text-center text-sm font-semibold transition-colors duration-300 ${
+                mode === "sell" ? "text-white" : "text-gray-100"
+              }`}
+            >
+              Sell
+            </span>
+          </button>
+        )}
 
         <div className="flex items-center space-x-2">
           <div
