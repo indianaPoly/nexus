@@ -1,5 +1,16 @@
-const App = () => {
-  return <div>아 도커 개힘들다 진심 .. </div>;
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/common/Layout/Layout";
+import MainPage from "./pages/MainPage";
+
+const App: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<MainPage />} />
+      </Route>
+    </Routes>
+  );
 };
 
 export default App;
