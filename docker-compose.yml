@@ -14,18 +14,6 @@ services:
       - CHOKIDAR_USEPOLLING=true
     command: ["yarn", "dev"]
 
-  backend:
-    build:
-      context: . # 루트를 빌드 컨텍스트로 설정
-      dockerfile: ./packages/backend/Dockerfile
-    volumes:
-      - ./packages/backend:/app # 백엔드 소스 코드 동기화
-      - /app/node_modules # node_modules 격리
-    ports:
-      - "5001:5000"
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
