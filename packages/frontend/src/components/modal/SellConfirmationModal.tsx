@@ -1,4 +1,6 @@
+import { useIPFS } from "@/providers/IPFSProvider";
 import Modal from "../common/Modal/Modal";
+import { useNavigate } from "react-router-dom";
 
 type SellConfirmationModalProps = {
   isOpen: boolean;
@@ -17,6 +19,29 @@ const SellConfirmationModal = ({
   price,
   file,
 }: SellConfirmationModalProps) => {
+  const ipfs = useIPFS();
+  const navigate = useNavigate();
+
+  const submit = async () => {
+    if (!file) {
+      alert("업로드할 파일을 선택해주세요.");
+
+      return;
+    }
+    try {
+      const added = await ipfs.add(file, {
+        pin: true,
+      });
+      console.log(added);
+      alert(`파일이 성공적으로 업로드되었습니다. CID: ${added.path}`);
+      // 스마트컨랙트를 활용한 데이터 관리 시스템이 필요함요.
+      navigate("/");
+    } catch (error) {
+      console.error("파일 업로드 중 오류 발생:", error);
+      alert("파일 업로드에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="text-center p-6 bg-gray-900 text-gray-300 rounded-lg shadow-2xl relative">
@@ -85,8 +110,8 @@ const SellConfirmationModal = ({
 
         {/* 확인 버튼 */}
         <button
-          onClick={() => {
-            console.log({ dataName, dataCategory, price, file });
+          onClick={async () => {
+            await submit();
             onClose();
           }}
           className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 transition-all duration-300"
