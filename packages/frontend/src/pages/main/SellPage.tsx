@@ -1,12 +1,14 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getETHUSDPrice } from "@/utils/getETHUSDPrice";
 import SellConfirmationModal from "@/components/modal/SellConfirmationModal";
+import UploadFile from "@/components/sellPage/UploadFile";
 
 const SellPage = () => {
   const [dataName, setItemName] = useState("");
   const [dataCategory, setDataCategory] = useState("");
   const [price, setPrice] = useState(0);
-  const [uploadFile, setUpLoadFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileCID, setFileCID] = useState<string | null>(null);
   const [ethPrice, setEthPrice] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -22,16 +24,14 @@ const SellPage = () => {
     updateEthPrice();
   }, []);
 
-  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setUpLoadFile(files[0]);
-    }
+  const handleFileSelected = (file: File | null) => {
+    setSelectedFile(file);
+    setFileCID(null);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!dataName || !dataCategory || !price || !uploadFile) {
+    if (!dataName || !dataCategory || !price || !selectedFile) {
       alert("모든 필드를 입력해주세요.");
       return;
     }
@@ -39,110 +39,171 @@ const SellPage = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-gray-900 p-8 text-gray-100 rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold mb-8 text-center text-pink-500">
-        데이터 판매하기
-      </h2>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900 to-gray-900 py-12 px-4">
+      <div
+        className="max-w-3xl mx-auto backdrop-blur-lg bg-gray-800/30 p-8 rounded-2xl 
+                    shadow-[0_0_30px_rgba(236,72,153,0.3)]
+                    border border-pink-500/30"
+      >
+        <h2
+          className="text-4xl font-bold mb-12 text-center bg-gradient-to-r from-pink-400 to-purple-400 
+                     bg-clip-text text-transparent 
+                     [text-shadow:0_0_30px_rgba(236,72,153,0.5)]"
+        >
+          Register Your Digital Assets
+        </h2>
 
-      {/* 판매 정보 입력 */}
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* 데이터명 */}
-        <div className="border-b border-gray-700 pb-4">
-          <label className="block text-lg font-semibold mb-2">
-            데이터 이름
-          </label>
-          <input
-            type="text"
-            value={dataName}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setItemName(e.target.value)
-            }
-            placeholder="이름을 입력해주세요."
-            className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-            required
-          />
-        </div>
-
-        {/* 카테고리 */}
-        <div className="border-b border-gray-700 pb-4">
-          <label className="block text-lg font-semibold mb-2">카테고리</label>
-          <select
-            value={dataCategory}
-            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-              setDataCategory(e.target.value)
-            }
-            className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-            required
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Data Name */}
+          <div
+            className="group relative border-b border-gray-700/50 pb-6 
+                       transition-all duration-300
+                       hover:border-pink-500/50"
           >
-            <option value="">카테고리를 선택해주세요.</option>
-            <option value="software">소프트웨어</option>
-            <option value="cloud">클라우드 서비스</option>
-            <option value="ai-services">AI 서비스</option>
-            <option value="data">데이터</option>
-          </select>
-        </div>
+            <label
+              className="block text-lg font-semibold mb-2 
+                          bg-gradient-to-r from-pink-400 to-purple-400 
+                          bg-clip-text text-transparent"
+            >
+              Data Name
+            </label>
+            <input
+              type="text"
+              value={dataName}
+              onChange={(e) => setItemName(e.target.value)}
+              placeholder="Enter your data name"
+              className="w-full p-4 bg-gray-800/50 text-white rounded-xl 
+                      border-2 border-gray-700/50 
+                      focus:outline-none focus:ring-2 focus:ring-pink-500 
+                      focus:border-transparent
+                      shadow-[0_0_10px_rgba(236,72,153,0.2)]
+                      transition-all duration-300
+                      hover:shadow-[0_0_15px_rgba(236,72,153,0.3)]
+                      backdrop-blur-sm"
+              required
+            />
+          </div>
 
-        {/* 파일 업로드 */}
-        <div className="border-b border-gray-700 pb-4">
-          <label className="block text-lg font-semibold mb-2">
-            파일 업로드
-          </label>
-          <input
-            type="file"
-            onChange={handleFileUpload}
-            className="w-full text-gray-400 file:bg-pink-500 file:text-white file:rounded-md file:px-4 file:py-2 file:border-none hover:file:bg-pink-600 transition duration-300"
-            accept="*/*"
-          />
-          {uploadFile && (
-            <p className="mt-2 text-sm text-gray-400">
-              업로드된 파일: {uploadFile.name}
-            </p>
-          )}
-        </div>
-
-        {/* 가격 */}
-        <div className="pb-4">
-          <label className="block text-lg font-semibold mb-2">가격 (ETH)</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(Number(e.target.value))}
-            step="0.000001"
-            placeholder="ETH 단위로 가격을 입력하세요"
-            className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-            required
-          />
-          {ethPrice > 0 && price > 0 && (
-            <p className="mt-2 text-sm text-gray-400">
-              예상 가치:{" "}
-              <span className="font-semibold text-green-400">
-                ${(price * ethPrice).toLocaleString()}
-              </span>{" "}
-              (USD)
-            </p>
-          )}
-        </div>
-
-        {/* 등록 버튼 */}
-        <div className="text-center">
-          <button
-            type="submit"
-            className="w-2/3 py-3 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-lg transition-transform duration-300 hover:scale-105"
+          {/* Category */}
+          <div
+            className="group relative border-b border-gray-700/50 pb-6
+                       transition-all duration-300
+                       hover:border-pink-500/50"
           >
-            상품 등록하기
-          </button>
-        </div>
-      </form>
+            <label
+              className="block text-lg font-semibold mb-2 
+                          bg-gradient-to-r from-pink-400 to-purple-400 
+                          bg-clip-text text-transparent"
+            >
+              Category
+            </label>
+            <select
+              value={dataCategory}
+              onChange={(e) => setDataCategory(e.target.value)}
+              className="w-full p-4 bg-gray-800/50 text-white rounded-xl 
+                      border-2 border-gray-700/50 
+                      focus:outline-none focus:ring-2 focus:ring-pink-500 
+                      focus:border-transparent
+                      shadow-[0_0_10px_rgba(236,72,153,0.2)]
+                      transition-all duration-300
+                      hover:shadow-[0_0_15px_rgba(236,72,153,0.3)]
+                      backdrop-blur-sm
+                      cursor-pointer"
+              required
+            >
+              <option value="">Select category</option>
+              <option value="software">Software</option>
+              <option value="cloud">Cloud Services</option>
+              <option value="ai-services">AI Services</option>
+              <option value="data">Data</option>
+            </select>
+          </div>
 
-      {/* 모달 */}
-      <SellConfirmationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        dataName={dataName}
-        dataCategory={dataCategory}
-        price={price}
-        file={uploadFile}
-      />
+          {/* File Upload */}
+          <div
+            className="group relative border-b border-gray-700/50 pb-6
+                       transition-all duration-300
+                       hover:border-pink-500/50"
+          >
+            <UploadFile onFileSelected={handleFileSelected} />
+          </div>
+
+          {/* Price */}
+          <div className="group relative pb-6">
+            <label
+              className="block text-lg font-semibold mb-2 
+                          bg-gradient-to-r from-pink-400 to-purple-400 
+                          bg-clip-text text-transparent"
+            >
+              Price (ETH)
+            </label>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(Number(e.target.value))}
+              step="0.000001"
+              placeholder="Enter price in ETH"
+              className="w-full p-4 bg-gray-800/50 text-white rounded-xl 
+                      border-2 border-gray-700/50 
+                      focus:outline-none focus:ring-2 focus:ring-pink-500 
+                      focus:border-transparent
+                      shadow-[0_0_10px_rgba(236,72,153,0.2)]
+                      transition-all duration-300
+                      hover:shadow-[0_0_15px_rgba(236,72,153,0.3)]
+                      backdrop-blur-sm"
+              required
+            />
+            {ethPrice > 0 && price > 0 && (
+              <p className="mt-3 text-base">
+                Estimated value:{" "}
+                <span
+                  className="font-bold bg-gradient-to-r from-green-400 to-emerald-400 
+                              bg-clip-text text-transparent"
+                >
+                  ${(price * ethPrice).toLocaleString()}
+                </span>{" "}
+                <span className="text-gray-400">(USD)</span>
+              </p>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <div className="text-center pt-6">
+            <button
+              type="submit"
+              className="relative overflow-hidden w-2/3 py-4 
+                      rounded-xl bg-gradient-to-r from-pink-500 to-purple-500
+                      text-white text-lg font-bold
+                      transition-all duration-300
+                      hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]
+                      transform hover:scale-105
+                      before:content-['']
+                      before:absolute
+                      before:inset-0
+                      before:bg-gradient-to-r
+                      before:from-transparent
+                      before:via-white/20
+                      before:to-transparent
+                      before:-translate-x-full
+                      hover:before:translate-x-full
+                      before:transition-transform
+                      before:duration-700"
+            >
+              Register Asset
+            </button>
+          </div>
+        </form>
+
+        {/* Modal */}
+        <SellConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          dataName={dataName}
+          dataCategory={dataCategory}
+          price={price}
+          file={selectedFile}
+        />
+      </div>
     </div>
   );
 };
